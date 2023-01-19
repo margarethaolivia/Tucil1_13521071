@@ -131,23 +131,35 @@ void swap(float &a, float &b)
     b = temp;
 }
 
-void permutation(vector<int> nums, int l, int h, char opvalid[], int *count, vector<string> *sol)
+bool isSwap(vector<int> nums, int start, int curr)
 {
-    if (l == h)
+    for (int i = start; i < curr; i++)
+    {
+        if (nums[i] == nums[curr])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void permutation(vector<int> nums, int idx, int n, char opvalid[], int *count, vector<string> *sol)
+{
+    if (idx >= n)
     {
         eval(opvalid, nums, 24, count, sol);
         return;
     }
 
-    for (int i = l; i <= h; i++)
+    for (int i = idx; i < n; i++)
     {
-        swap(nums[l], nums[i]);
-
-        // next permutation
-        permutation(nums, l + 1, h, opvalid, count, sol);
-
-        // backtrack
-        swap(nums[l], nums[i]);
+        bool check = isSwap(nums, idx, i);
+        if (check)
+        {
+            swap(nums[idx], nums[i]);
+            permutation(nums, idx + 1, n, opvalid, count, sol);
+            swap(nums[idx], nums[i]);
+        }
     }
 }
 
@@ -214,7 +226,7 @@ int main()
         {
             // cards[i] = (rand() % N) + 1;
             testing.push_back((rand() % N) + 1);
-            cout << testing[i] << " ";
+            cout << cardvalid[testing[i] - 1] << " ";
         }
         cout << endl;
     }
@@ -222,7 +234,7 @@ int main()
     // start stopwatch
     auto start = chrono::system_clock::now();
 
-    permutation(testing, 0, 3, opvalid, &count, &sol);
+    permutation(testing, 0, 4, opvalid, &count, &sol);
 
     if (count == 0)
     {
