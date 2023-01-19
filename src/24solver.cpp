@@ -32,11 +32,11 @@ void display(vector<int> cards, char ops[], int pattern, int *count, vector<stri
         // printf("%d %c (%d %c %d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
         *count += 1;
         break;
-    // case 5:
-    //     printf("%d %c (%d %c (%d %c %d))\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-    //     // printf("%d %c %d %c (%d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-    //     *count += 1;
-    //     break;
+    case 5:
+        sprintf(buffer, "%d %c (%d %c (%d %c %d))\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
+        // printf("%d %c %d %c (%d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
+        *count += 1;
+        break;
     default:
         break;
     }
@@ -111,14 +111,14 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                     display(cards, ops, 4, count, sol);
                 }
 
-                // // pattern 5
-                // res = calculate(ops[2], cards[2], cards[3]);
-                // res = calculate(ops[1], cards[1], res);
-                // res = calculate(ops[0], cards[0], res);
-                // if (res == GOAL)
-                // {
-                //     display(cards, ops, 5, count, sol);
-                // }
+                // pattern 5
+                res = calculate(ops[2], cards[2], cards[3]);
+                res = calculate(ops[1], cards[1], res);
+                res = calculate(ops[0], cards[0], res);
+                if (res == GOAL)
+                {
+                    display(cards, ops, 5, count, sol);
+                }
             }
         }
     }
