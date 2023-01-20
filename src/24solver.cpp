@@ -1,9 +1,3 @@
-// #include <chrono>
-// #include <cstdlib>
-// #include <ctime>
-// #include <iostream>
-// #include <time.h>
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -15,33 +9,24 @@ void display(vector<int> cards, char ops[], int pattern, int *count, vector<stri
     {
     case 1:
         sprintf(buffer, "((%d %c %d) %c %d) %c %d\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        // printf("(%d %c %d) %c %d %c %d\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        *count += 1;
         break;
     case 2:
         sprintf(buffer, "(%d %c (%d %c %d)) %c %d\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        // printf("%d %c (%d %c %d) %c %d\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        *count += 1;
         break;
     case 3:
         sprintf(buffer, "(%d %c %d) %c (%d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        *count += 1;
         break;
     case 4:
         sprintf(buffer, "%d %c ((%d %c %d) %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        // printf("%d %c (%d %c %d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        *count += 1;
         break;
     case 5:
         sprintf(buffer, "%d %c (%d %c (%d %c %d))\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        // printf("%d %c %d %c (%d %c %d)\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
-        *count += 1;
         break;
     default:
         break;
     }
-
-    cout << buffer;
+    *count += 1;
+    // cout << buffer;
     sol->push_back(buffer);
 }
 
@@ -171,7 +156,6 @@ int main()
     string *result;
 
     float res;
-    // float cards[4];
     int count = 0;
 
     vector<string> sol;
@@ -180,7 +164,7 @@ int main()
     string cardvalid[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
     char opvalid[4] = {'+', '-', '*', '/'};
 
-    int i, j, k;
+    int i;
 
     cout << "24 GAME SOLVER" << endl
          << endl;
@@ -197,6 +181,8 @@ int main()
         cin >> menu;
     } while (menu != "1" && menu != "2" && printf("Masukan tidak sesuai!\n"));
 
+    cout << endl;
+
     // menu sudah pasti benar
     if (menu == "1")
     {
@@ -210,8 +196,14 @@ int main()
                 result = find(begin(cardvalid), end(cardvalid), input);
             } while (result == end(cardvalid) && printf("Masukan tidak sesuai!\n"));
 
-            // cards[i] = distance(cardvalid, result) + 1;
             testing.push_back(distance(cardvalid, result) + 1);
+        }
+
+        cout << endl
+             << "Susunan Kartu:" << endl;
+        for (auto x : testing)
+        {
+            cout << x << " ";
         }
     }
     else // menu == 2
@@ -222,37 +214,46 @@ int main()
         // angka yang valid (1-13)
         int N = 13;
 
+        cout << "Susunan Kartu:" << endl;
         for (i = 0; i < 4; i++)
         {
-            // cards[i] = (rand() % N) + 1;
             testing.push_back((rand() % N) + 1);
             cout << cardvalid[testing[i] - 1] << " ";
         }
-        cout << endl;
     }
 
-    // start stopwatch
-    auto start = chrono::system_clock::now();
+    cout << endl
+         << endl;
 
+    // start stopwatch
+    auto start = chrono::high_resolution_clock::now();
+
+    // proses bruteforce
     permutation(testing, 0, 4, opvalid, &count, &sol);
+
+    // end stopwatch
+    auto end = chrono::high_resolution_clock::now();
 
     if (count == 0)
     {
-        sol.push_back("Tidak ada solusi\n");
-        cout << "Tidak ada solusi" << endl;
+        sol.push_back("Tidak ada solusi yang ditemukan\n");
+        cout << sol[0];
     }
     else
     {
-        cout << "Total terdapat " << count << " solusi" << endl;
-    }
+        cout << "Terdapat " << count << " solusi yang ditemukan:" << endl;
 
-    // end stopwatch
-    auto end = chrono::system_clock::now();
+        for (auto x : sol)
+        {
+            cout << x;
+        }
+    }
 
     // output waktu eksekusi program
     chrono::duration<double> time = end - start;
-    time_t end_time = chrono::system_clock::to_time_t(end);
-    cout << "Waktu eksekusi: " << time.count() << " s" << endl
+    time_t end_time = chrono::high_resolution_clock::to_time_t(end);
+    cout << endl
+         << "Waktu eksekusi: " << time.count() << " s" << endl
          << endl;
 
     // save solusi
