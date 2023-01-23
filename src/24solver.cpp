@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void display(vector<int> cards, char ops[], int pattern, int *count, vector<string> *sol)
+// menyimpan solusi yang ditemukan ke dalam variabel sol
+void save(vector<int> cards, char ops[], int pattern, int *count, vector<string> *sol)
 {
-    char buffer[25];
+    char buffer[25]; // tempat penyimpanan string solusi sementara
 
     switch (pattern)
     {
@@ -23,13 +24,15 @@ void display(vector<int> cards, char ops[], int pattern, int *count, vector<stri
         sprintf(buffer, "%d %c (%d %c (%d %c %d))\n", cards[0], ops[0], cards[1], ops[1], cards[2], ops[2], cards[3]);
         break;
     default:
-        break;
+        cerr << "Pola tidak valid!" << endl;
+        throw -1;
     }
-    *count += 1;
-    // cout << buffer;
-    sol->push_back(buffer);
+
+    *count += 1;            // banyaknya solusi ditambah 1
+    sol->push_back(buffer); // menyimpan string solusi
 }
 
+// mengembalikan hasil operasi sesuai operator
 float calculate(char op, float num1, float num2)
 {
     switch (op)
@@ -48,6 +51,7 @@ float calculate(char op, float num1, float num2)
     }
 }
 
+// melakukan brute force terhadap operator yang valid dan kelima pola
 void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<string> *sol)
 {
     int i, j, k;
@@ -66,7 +70,7 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                 res = calculate(ops[2], res, cards[3]);
                 if (res == GOAL)
                 {
-                    display(cards, ops, 1, count, sol);
+                    save(cards, ops, 1, count, sol);
                 }
 
                 // pattern 2
@@ -75,7 +79,7 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                 res = calculate(ops[2], res, cards[3]);
                 if (res == GOAL)
                 {
-                    display(cards, ops, 2, count, sol);
+                    save(cards, ops, 2, count, sol);
                 }
 
                 // pattern 3
@@ -84,7 +88,7 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                 res = calculate(ops[1], res1, res2);
                 if (res == GOAL)
                 {
-                    display(cards, ops, 3, count, sol);
+                    save(cards, ops, 3, count, sol);
                 }
 
                 // pattern 4
@@ -93,7 +97,7 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                 res = calculate(ops[0], cards[0], res);
                 if (res == GOAL)
                 {
-                    display(cards, ops, 4, count, sol);
+                    save(cards, ops, 4, count, sol);
                 }
 
                 // pattern 5
@@ -102,13 +106,14 @@ void eval(char opvalid[], vector<int> cards, float GOAL, int *count, vector<stri
                 res = calculate(ops[0], cards[0], res);
                 if (res == GOAL)
                 {
-                    display(cards, ops, 5, count, sol);
+                    save(cards, ops, 5, count, sol);
                 }
             }
         }
     }
 }
 
+// menukar variabel
 void swap(float &a, float &b)
 {
     float temp = a;
@@ -116,6 +121,9 @@ void swap(float &a, float &b)
     b = temp;
 }
 
+// mengecek apakah suatu angka perlu ditukar atau tidak (menangani kasus jika ada masukan angka yang ganda)
+// jika angka sama (ganda), maka mengembalikan 0 (false) -> tidak perlu ditukar
+// jika tidak, maka mengembalikan 1 (true)
 bool isSwap(vector<int> nums, int start, int curr)
 {
     for (int i = start; i < curr; i++)
@@ -128,6 +136,7 @@ bool isSwap(vector<int> nums, int start, int curr)
     return 1;
 }
 
+// melakukan permutasi terhadap angka masukan, serta memanggil fungsi eval (untuk brute force) pada setiap permutasi yang ada
 void permutation(vector<int> nums, int idx, int n, char opvalid[], int *count, vector<string> *sol)
 {
     if (idx >= n)
@@ -150,23 +159,21 @@ void permutation(vector<int> nums, int idx, int n, char opvalid[], int *count, v
 
 int main()
 {
-    const float GOAL = 24.0;
+    const float GOAL = 24.0; // hasil yang diinginkan
 
-    string menu, input, save, filename;
-    string *result;
+    string menu, input, save, filename, *result; // variabel untuk input
 
-    float res;
-    int count = 0;
+    int count = 0; // banyaknya solusi
 
-    vector<string> sol;
-    vector<int> testing;
+    vector<string> sol; // vector penyimpanan solusi
+    vector<int> cards;  // vector penyimpanan angka/kartu masukan
 
-    string cardvalid[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-    char opvalid[4] = {'+', '-', '*', '/'};
+    string cardvalid[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}; // array kartu yang valid
+    char opvalid[4] = {'+', '-', '*', '/'};                                                    // array operator yang valid
 
-    int i;
+    int i; // variabel untuk iterasi
 
-    cout << "24 GAME SOLVER" << endl
+    cout << "SELAMAT DATANG DI \"24 CARD GAME\" SOLVER" << endl
          << endl;
 
     cout << "Pilihan:" << endl;
@@ -184,29 +191,24 @@ int main()
     cout << endl;
 
     // menu sudah pasti benar
-    if (menu == "1")
+
+    if (menu == "1") // input dari keyboard
     {
         for (i = 0; i < 4; i++)
         {
-            // input dan validasi angka/huruf masukan
+            // input dan validasi kartu
             do
             {
-                cout << "Masukkan angka/huruf ke-" << i + 1 << ": ";
+                cout << "Masukkan kartu ke-" << i + 1 << ": ";
                 cin >> input;
                 result = find(begin(cardvalid), end(cardvalid), input);
             } while (result == end(cardvalid) && printf("Masukan tidak sesuai!\n"));
 
-            testing.push_back(distance(cardvalid, result) + 1);
+            cards.push_back(distance(cardvalid, result) + 1);
         }
-
-        cout << endl
-             << "Susunan Kartu:" << endl;
-        for (auto x : testing)
-        {
-            cout << x << " ";
-        }
+        cout << endl;
     }
-    else // menu == 2
+    else // menu == 2 -> random
     {
         // menggunakan current time untuk seed random
         srand(time(0));
@@ -214,12 +216,17 @@ int main()
         // angka yang valid (1-13)
         int N = 13;
 
-        cout << "Susunan Kartu:" << endl;
         for (i = 0; i < 4; i++)
         {
-            testing.push_back((rand() % N) + 1);
-            cout << cardvalid[testing[i] - 1] << " ";
+            cards.push_back((rand() % N) + 1);
         }
+    }
+
+    // output susunan kartu masukan
+    cout << "Susunan kartu:" << endl;
+    for (auto x : cards)
+    {
+        cout << cardvalid[x - 1] << " ";
     }
 
     cout << endl
@@ -229,11 +236,12 @@ int main()
     auto start = chrono::high_resolution_clock::now();
 
     // proses bruteforce
-    permutation(testing, 0, 4, opvalid, &count, &sol);
+    permutation(cards, 0, 4, opvalid, &count, &sol);
 
     // end stopwatch
     auto end = chrono::high_resolution_clock::now();
 
+    // output solusi
     if (count == 0)
     {
         sol.push_back("Tidak ada solusi yang ditemukan\n");
@@ -250,13 +258,12 @@ int main()
     }
 
     // output waktu eksekusi program
-    chrono::duration<double> time = end - start;
-    time_t end_time = chrono::high_resolution_clock::to_time_t(end);
+    auto time = chrono::duration_cast<chrono::microseconds>(end - start);
     cout << endl
-         << "Waktu eksekusi: " << time.count() << " s" << endl
+         << "Waktu eksekusi: " << time.count() << " mikrosekon" << endl
          << endl;
 
-    // save solusi
+    // menyimpan solusi ke file txt
     do
     {
         cout << "Apakah ingin menyimpan solusi? (y/n) : ";
@@ -265,21 +272,22 @@ int main()
 
     if (save == "y")
     {
-        cout << "Masukkan nama file yang diinginkan beserta formatnya (.txt) : ";
+        cout << endl
+             << "Masukkan nama file yang diinginkan : ";
         cin >> filename;
         fstream file;
-        file.open("../test/" + filename, ios_base::out);
+        file.open("test/" + filename + ".txt", ios_base::out);
 
         for (i = 0; i < sol.size(); i++)
         {
             file << sol[i];
         }
 
-        cout << "Berhasil menyimpan solusi pada " << filename << endl;
+        cout << "Berhasil menyimpan solusi pada test/" << filename << ".txt" << endl;
     }
 
     cout << endl
-         << "Terima kasih telah menggunakan 24 Game Solver" << endl;
+         << "Terima kasih telah menggunakan \"24 Card Game\" Solver" << endl;
 
     return 0;
 }
