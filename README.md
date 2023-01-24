@@ -43,7 +43,7 @@ Tucil1_13521071
 │       24solver.exe
 │
 ├───doc
-│       Laporan - 13521071.pdf
+│       Tucil1_K1_13521071_Margaretha Olivia Haryono.pdf
 │
 ├───src
 │       24solver.cpp
